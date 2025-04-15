@@ -1,1 +1,56 @@
+import nltk
+import random
+import string
+
+# Download required NLTK data
+nltk.download('punkt')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+# Initialize lemmatizer
+lemmatizer = WordNetLemmatizer()
+
+# Predefined responses
+responses = {
+    "greeting": ["Hello!", "Hi there!", "Hey!", "Hi, how can I help you?"],
+    "goodbye": ["Goodbye!", "See you later!", "Take care!"],
+    "thanks": ["You're welcome!", "No problem!", "Glad to help!"],
+    "default": ["I'm not sure I understand. Can you rephrase?", "Tell me more.", "Interesting..."]
+}
+
+# Preprocess user input
+def preprocess(sentence):
+    tokens = word_tokenize(sentence.lower())
+    words = [lemmatizer.lemmatize(word) for word in tokens if word not in string.punctuation]
+    return words
+
+# Determine user intent
+def get_intent(words):
+    if any(word in words for word in ["hello", "hi", "hey"]):
+        return "greeting"
+    elif any(word in words for word in ["bye", "goodbye", "see you"]):
+        return "goodbye"
+    elif any(word in words for word in ["thanks", "thank"]):
+        return "thanks"
+    else:
+        return "default"
+
+# Chatbot main function
+def chatbot():
+    print("ChatBot: Hello! Type 'exit' to end the chat.")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() in ["exit", "quit", "bye"]:
+            print("ChatBot:", random.choice(responses["goodbye"]))
+            break
+        words = preprocess(user_input)
+        intent = get_intent(words)
+        print("ChatBot:", random.choice(responses[intent]))
+
+# Run the chatbot
+if __name__ == "__main__":
+    chatbot()
 
